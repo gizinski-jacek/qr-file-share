@@ -1,4 +1,84 @@
 .app {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 5rem;
 	font-family: sans-serif;
+	color: white;
+	background: linear-gradient(rgb(100, 0, 200), rgb(0, 200, 50));
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 1.5rem;
+
+	img {
+		display: block;
+		width: 200px;
+		height: 200px;
+		text-align: center;
+	}
+}
+
+.img-link {
 	text-align: center;
+	padding: 1rem;
+	border: 2px solid white;
+	border-radius: 1rem;
+
+	img {
+		font-weight: initial;
+		font-size: 1rem;
+	}
+
+	div {
+		margin: 2rem;
+		text-transform: uppercase;
+	}
+}
+
+.send,
+.receive,
+.code {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.send,
+.code {
+	img {
+		display: block;
+		width: 200px;
+		height: 200px;
+		text-align: center;
+	}
+
+	form {
+		visibility: hidden;
+		height: 0;
+	}
+}
+
+button {
+	background: none;
+	color: inherit;
+	padding: 1rem;
+	border: 2px solid white;
+	border-radius: 1rem;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	outline: inherit;
+	text-transform: uppercase;
+}
+
+.home-link {
+	position: absolute;
+	left: 0;
+	bottom: 0;
 }
