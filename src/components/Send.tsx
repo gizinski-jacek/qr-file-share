@@ -1,12 +1,17 @@
-// import "./styles.scss";
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import '../App.scss';
+import { useRef, useState } from 'react';
 import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 
 const Send = () => {
 	const [fileData, setFileData] = useState<File | null>();
 	const [fileURL, setFileURL] = useState<string | null>();
+	const ref = useRef<HTMLInputElement>(null);
+
+	const clickSelectFile = (e: React.MouseEvent<HTMLImageElement>) => {
+		e.stopPropagation();
+		ref.current?.click();
+	};
 
 	const handleFileSelect = (e: React.ChangeEvent) => {
 		e.stopPropagation();
@@ -26,7 +31,7 @@ const Send = () => {
 			const profileData = new FormData();
 			profileData.append('file', fileData);
 			const res = await axios.post(
-				`${process.env.API_URI}/api/send-single-file`,
+				`${process.env.REACT_APP_API_URI_DEV}/api/send-single-file`,
 				profileData
 			);
 			setFileData(null);
@@ -39,10 +44,11 @@ const Send = () => {
 	return (
 		<div className='send'>
 			{fileURL && <QRCodeSVG value={fileURL} />}
+			<img src='' alt='select file' onClick={clickSelectFile} />
 			<form>
 				<label htmlFor='file'>Select file</label>
 				<input
-					style={{ display: 'none' }}
+					ref={ref}
 					id='file'
 					name='file'
 					type='file'
@@ -52,7 +58,6 @@ const Send = () => {
 			<button type='button' onClick={handleFileUpload}>
 				send
 			</button>
-			<Link to='/'>{'<- Home'}</Link>
 		</div>
 	);
 };
