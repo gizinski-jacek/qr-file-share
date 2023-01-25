@@ -5,7 +5,7 @@
 	align-items: center;
 	gap: 5rem;
 	font-family: sans-serif;
-	color: white;
+	color: rgb(255, 255, 255);
 	background: linear-gradient(rgb(100, 0, 200), rgb(0, 200, 50));
 }
 
@@ -15,10 +15,11 @@ a {
 	font-weight: 600;
 	font-size: 1.5rem;
 
-	img {
+	.send-icon,
+	.receive-icon {
 		display: block;
-		width: 200px;
-		height: 200px;
+		width: 160px;
+		height: 160px;
 		text-align: center;
 	}
 }
@@ -26,7 +27,7 @@ a {
 .img-link {
 	text-align: center;
 	padding: 1rem;
-	border: 2px solid white;
+	border: 4px solid rgb(255, 255, 255);
 	border-radius: 1rem;
 
 	img {
@@ -47,15 +48,16 @@ a {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	gap: 2rem;
 }
 
 .send,
 .code {
-	img {
+	.add-icon,
+	.checkmark-icon {
 		display: block;
-		width: 200px;
-		height: 200px;
-		text-align: center;
+		width: 160px;
+		height: 160px;
 	}
 
 	form {
@@ -64,21 +66,39 @@ a {
 	}
 }
 
-button {
+.send-btn,
+.dirId-div {
 	background: none;
 	color: inherit;
 	padding: 1rem;
-	border: 2px solid white;
+	border: 4px solid rgb(255, 255, 255);
 	border-radius: 1rem;
 	font: inherit;
 	font-weight: 600;
 	cursor: pointer;
 	outline: inherit;
 	text-transform: uppercase;
+
+	&:disabled {
+		opacity: 0.5;
+	}
 }
 
 .home-link {
 	position: absolute;
-	left: 0;
-	bottom: 0;
+	top: 0.5rem;
+	left: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0 0.25rem;
+	font-size: 1rem;
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 0.5rem;
+
+	.arrow-icon {
+		display: block;
+		width: 2rem;
+		height: 2rem;
+	}
 }
