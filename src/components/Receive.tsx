@@ -11,7 +11,7 @@ const Receive = () => {
 		(async () => {
 			try {
 				const res = await axios.get(
-					`${process.env.REACT_APP_API_URI}/receive-single-file/${dirId}`
+					`${process.env.REACT_APP_API_URI}/api/receive-single-file/${dirId}`
 				);
 				setDirId(res.data);
 			} catch (error) {
@@ -30,13 +30,12 @@ const Receive = () => {
 
 	return (
 		<div className='receive'>
-			<h1>Hello receive</h1>
 			{dirId && (
 				<QRCodeSVG
 					value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
 				/>
 			)}
-			<div>{dirId}</div>
+			{dirId && <div className='dirId-div'>{dirId}</div>}
 		</div>
 	);
 };
