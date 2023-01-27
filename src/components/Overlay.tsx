@@ -3,19 +3,19 @@ import { useState } from 'react';
 import { NavLink, Outlet, useOutletContext } from 'react-router-dom';
 
 interface ContextType {
-	singleMode: boolean;
+	singleFile: boolean;
 }
 
 const Overlay = () => {
-	const [singleMode, setSingleMode] = useState<boolean>(true);
+	const [singleFile, setSingleFile] = useState<boolean>(true);
 
-	const setSingle = () => setSingleMode(true);
+	const setSingle = () => setSingleFile(true);
 
-	const setMultiple = () => setSingleMode(false);
+	const setMultiple = () => setSingleFile(false);
 
 	return (
 		<>
-			<Outlet context={{ mode: singleMode }} />
+			<Outlet context={{ singleFile }} />
 			<div className='overlay'>
 				<NavLink className='home-link' to=''>
 					<div className='arrow-icon' aria-label='home page link'>
@@ -44,14 +44,14 @@ const Overlay = () => {
 				</NavLink>
 				<div className='modes'>
 					<button
-						className={singleMode ? 'active' : ''}
+						className={singleFile ? 'active' : ''}
 						type='button'
 						onClick={setSingle}
 					>
 						Single
 					</button>
 					<button
-						className={!singleMode ? 'active' : ''}
+						className={!singleFile ? 'active' : ''}
 						type='button'
 						onClick={setMultiple}
 					>
@@ -63,7 +63,7 @@ const Overlay = () => {
 	);
 };
 
-export function useSingleMode() {
+export function useSingleFile() {
 	return useOutletContext<ContextType>();
 }
 
