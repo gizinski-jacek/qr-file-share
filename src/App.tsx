@@ -1,5 +1,5 @@
 import './App.scss';
-import { Routes, Route, NavLink } from 'react-router-dom';
+import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import Send from './components/Send';
 import Receive from './components/Receive';
 import Code from './components/Code';
@@ -42,8 +42,10 @@ const App = () => {
 				/>
 				<Route element={<Overlay />}>
 					<Route path='send' element={<Send />} />
+					{/* Remove single/multiple buttons from receive route */}
 					<Route path='receive' element={<Receive />} />
 					<Route path='code/:dirId' element={<Code />} />
+					<Route path='code' element={<Navigate to='/' replace />}></Route>
 				</Route>
 			</Routes>
 		</div>
