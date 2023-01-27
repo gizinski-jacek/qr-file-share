@@ -1,0 +1,39 @@
+.code {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2rem;
+}
+
+.add-icon,
+	.checkmark-icon {
+		display: block;
+		width: 160px;
+		height: 160px;
+		cursor:pointer;
+		transition: 0.1s ease-in-out;
+
+		&:hover svg { 
+			fill: rgba(255, 255, 255, 0.1);
+		 }
+	}
+
+	button {
+		padding: 1rem;
+		border: 4px solid rgb(255, 255, 255);
+		border-radius: 1rem;
+	}
+
+	form {
+		visibility: hidden;
+		height: 0;
+	}
+
+	.dirId-div {
+		padding: 1rem;
+		border: 4px solid rgb(255, 255, 255);
+		border-radius: 1rem;
+		font-weight: 600;
+	}
+	
