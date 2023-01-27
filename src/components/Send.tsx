@@ -1,15 +1,22 @@
 import '../styles/Send.scss';
-import { useRef, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
+import axios, { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
-import { useSingleMode } from './Overlay';
+import { useSingleFile } from './Overlay';
 
 const Send = () => {
-	const [fileList, setFileList] = useState<FileList | null>();
+	const [fileList, setFileList] = useState<FileList | null>(null);
 	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
-	const [fileURL, setFileURL] = useState<string | null>();
+	const [filesURLs, setFilesURLs] = useState<string[] | null>(null);
+	const [uploadError, setUploadError] = useState<string | null>(null);
 	const ref = useRef<HTMLInputElement>(null);
-	const { singleMode } = useSingleMode();
+	const { singleFile } = useSingleFile();
+
+	useEffect(() => {
+		setFileList(null);
+		setFileListErrors(null);
+		setFilesURLs(null);
+	}, [singleFile]);
 
 	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -40,21 +47,37 @@ const Send = () => {
 		try {
 			if (!fileList) return;
 			const uploadData = new FormData();
-			for (let i = 0; i < fileList.length; i++) {
-				uploadData.append(`file-${i}`, fileList[i]);
+			if (singleFile) {
+				uploadData.append('file', fileList[0]);
+				const res = await axios.post(
+					`${process.env.REACT_APP_API_URI}/api/send-single-file`,
+					uploadData
+				);
+				setFilesURLs([res.data]);
 			}
-			const res = await axios.post(
-				`${process.env.REACT_APP_API_URI}/api/send-single-file`,
-				uploadData
-			);
+			if (!singleFile) {
+				for (let i = 0; i < fileList.length; i++) {
+					uploadData.append('files', fileList[i]);
+				}
+				const res = await axios.post(
+					`${process.env.REACT_APP_API_URI}/api/send-multiple-files`,
+					uploadData
+				);
+				setFilesURLs(res.data);
+			}
 			setFileList(null);
-			setFileURL(res.data);
-		} catch (error) {
+			setUploadError(null);
+		} catch (error: any) {
 			console.log(error);
+			if (error instanceof AxiosError) {
+				setUploadError(error.message);
+			} else {
+				setUploadError('Unknown server error.');
+			}
 		}
 	};
 
-	return (
+	return !uploadError ? (
 		<div className='send'>
 			<form encType='multipart/form-data'>
 				<label htmlFor='file'>Select file</label>
@@ -63,16 +86,16 @@ const Send = () => {
 					id='file'
 					name='file'
 					type='file'
-					multiple={!singleMode}
+					multiple={!singleFile}
 					onChange={handleFileSelect}
 				/>
 			</form>
-			{fileURL && (
-				<div className='qr-code' aria-label='qr code'>
-					<QRCodeSVG value={fileURL} />
+			{filesURLs?.map((url, i) => (
+				<div key={i} className='qr-code' aria-label='qr code'>
+					<QRCodeSVG value={url} />
 				</div>
-			)}
-			{fileURL ? null : fileList ? (
+			))}
+			{filesURLs ? null : fileList ? (
 				<div
 					className='checkmark-icon'
 					onClick={clickSelectFile}
@@ -137,6 +160,8 @@ const Send = () => {
 				Send
 			</button>
 		</div>
+	) : (
+		<div>{uploadError}</div>
 	);
 };
 
