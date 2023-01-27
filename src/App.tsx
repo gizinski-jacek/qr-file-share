@@ -12,7 +12,7 @@ const App = () => {
 				<Route
 					path=''
 					element={
-						<>
+						<div className='home'>
 							<NavLink to='send' className='img-link'>
 								<div className='send-icon' aria-label='send file'>
 									<svg
@@ -37,7 +37,7 @@ const App = () => {
 								</div>
 								<div>Receive</div>
 							</NavLink>
-						</>
+						</div>
 					}
 				/>
 				<Route element={<Overlay />}>
