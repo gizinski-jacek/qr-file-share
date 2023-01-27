@@ -1,62 +1,91 @@
 import '../styles/Code.scss';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
-import { useSingleMode } from './Overlay';
+import { useSingleFile } from './Overlay';
 
 const Code = () => {
 	const { dirId } = useParams();
-	const [fileData, setFileData] = useState<File | null>();
+	const [fileList, setFileList] = useState<FileList | null>(null);
+	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
+	const [serverError, setServerError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
-	const { singleMode } = useSingleMode();
+	const { singleFile } = useSingleFile();
+
+	useEffect(() => {
+		setFileList(null);
+		setFileListErrors(null);
+	}, [singleFile]);
 
 	useEffect(() => {
 		(async () => {
 			try {
-				if (!dirId) return;
 				await axios.get(
 					`${process.env.REACT_APP_API_URI}/api/code-dir-check/${dirId}`
 				);
-			} catch (error) {
+			} catch (error: any) {
 				console.log(error);
+				if (error instanceof AxiosError) {
+					setServerError(error.message);
+				} else {
+					setServerError('Unknown server error.');
+				}
 			}
 		})();
 	});
 
-	const clickSelectFile = (e: React.MouseEvent<HTMLImageElement>) => {
+	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
 		ref.current?.click();
 	};
 
-	const handleFileSelect = (e: React.ChangeEvent) => {
+	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.stopPropagation();
-		const target = e.target as HTMLInputElement;
-		const file = (target.files as FileList)[0];
-		if (file.size > 2000000) {
-			alert('File too big');
+		const files = e.target.files as FileList;
+		const errors: string[] = [];
+		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
+			if (file.size > 2000000) {
+				errors.push(`${file.name} file is too big (max. 2Mb)`);
+			}
+		}
+		if (errors.length) {
+			setFileListErrors(errors);
+			setFileList(null);
 			return;
 		}
-		setFileData(file);
+		setFileListErrors(null);
+		setFileList(files);
 	};
 
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		try {
-			if (!fileData || !dirId) return;
-			const profileData = new FormData();
-			profileData.append('file', fileData);
+			if (!fileList) return;
+			const uploadData = new FormData();
+			for (let i = 0; i < fileList.length; i++) {
+				uploadData.append('files', fileList[i]);
+			}
 			await axios.post(
-				`${process.env.REACT_APP_API_URI}/api/receive-single-file/${dirId}`,
-				profileData
+				`${process.env.REACT_APP_API_URI}/api/receive-files/${dirId}`,
+				uploadData
 			);
-			setFileData(null);
-		} catch (error) {
+			setFileList(null);
+			setServerError(null);
+			setSuccess(true);
+		} catch (error: any) {
 			console.log(error);
+			if (error instanceof AxiosError) {
+				setServerError(error.message);
+			} else {
+				setServerError('Unknown server error.');
+			}
 		}
 	};
 
-	return !dirId ? null : (
+	return !serverError ? (
 		<div className='send'>
 			<form encType='multipart/form-data'>
 				<label htmlFor='file'>Select file</label>
@@ -65,15 +94,17 @@ const Code = () => {
 					id='file'
 					name='file'
 					type='file'
-					multiple={!singleMode}
+					multiple={!singleFile}
 					onChange={handleFileSelect}
 				/>
 			</form>
-			{fileData ? (
+			{success ? (
+				<div>Files uploaded successfully.</div>
+			) : fileList ? (
 				<div
-					aria-label='file selected'
 					className='checkmark-icon'
 					onClick={clickSelectFile}
+					aria-label='file selected'
 				>
 					<svg
 						viewBox='0 0 24 24'
@@ -90,9 +121,12 @@ const Code = () => {
 					</svg>
 				</div>
 			) : (
-				<div className='add-icon' onClick={clickSelectFile}>
+				<div
+					className='add-icon'
+					onClick={clickSelectFile}
+					aria-label='select file to upload'
+				>
 					<svg
-						aria-label='select file to upload'
 						viewBox='0 0 24 24'
 						fill='none'
 						xmlns='http://www.w3.org/2000/svg'
@@ -107,16 +141,32 @@ const Code = () => {
 					</svg>
 				</div>
 			)}
-			{fileData && <div>File: {fileData.name}</div>}
+			{fileListErrors && (
+				<div>
+					{fileListErrors.map((error, i) => (
+						<div key={i}>{error}</div>
+					))}
+				</div>
+			)}
+			{fileList && (
+				<div>
+					Files:{' '}
+					{Array.from(fileList).map((file, i) => {
+						return <div key={i}>{file.name}</div>;
+					})}
+				</div>
+			)}
 			<button
 				className='send-btn'
 				type='button'
 				onClick={handleFileUpload}
-				disabled={!fileData}
+				disabled={!fileList || !!fileListErrors}
 			>
 				Send
 			</button>
 		</div>
+	) : (
+		<div>{serverError}</div>
 	);
 };
 
