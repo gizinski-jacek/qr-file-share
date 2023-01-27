@@ -1,24 +1,31 @@
 import '../styles/Receive.scss';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { io } from 'socket.io-client';
 
 const Receive = () => {
-	const [dirId, setDirId] = useState<string>('');
+	const [dirId, setDirId] = useState<string | null>(null);
+	const [codeError, setCodeError] = useState<string | null>(null);
 
 	useEffect(() => {
 		(async () => {
 			try {
 				const res = await axios.get(
-					`${process.env.REACT_APP_API_URI}/api/receive-single-file/${dirId}`
+					`${process.env.REACT_APP_API_URI}/api/receive-files`
 				);
 				setDirId(res.data);
-			} catch (error) {
+			} catch (error: any) {
 				console.log(error);
+				setDirId(null);
+				if (error instanceof AxiosError) {
+					setCodeError(error.message);
+				} else {
+					setCodeError('Unknown server error.');
+				}
 			}
 		})();
-	}, [dirId]);
+	}, []);
 
 	// useEffect(() => {
 	//   (() => {
@@ -28,7 +35,7 @@ const Receive = () => {
 	//   })();
 	// }, [dirId]);
 
-	return (
+	return !codeError ? (
 		<div className='receive'>
 			{dirId && (
 				<div className='qr-code' aria-label='qr code'>
@@ -39,6 +46,8 @@ const Receive = () => {
 			)}
 			{dirId && <div className='dirId-div'>{dirId}</div>}
 		</div>
+	) : (
+		<div>{codeError}</div>
 	);
 };
 
