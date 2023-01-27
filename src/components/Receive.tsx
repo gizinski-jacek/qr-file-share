@@ -1,4 +1,4 @@
-import '../App.scss';
+import '../styles/Receive.scss';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import axios from 'axios';
@@ -31,9 +31,11 @@ const Receive = () => {
 	return (
 		<div className='receive'>
 			{dirId && (
-				<QRCodeSVG
-					value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
-				/>
+				<div className='qr-code' aria-label='qr code'>
+					<QRCodeSVG
+						value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
+					/>
+				</div>
 			)}
 			{dirId && <div className='dirId-div'>{dirId}</div>}
 		</div>
