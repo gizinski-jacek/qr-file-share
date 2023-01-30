@@ -2,7 +2,6 @@ import '../styles/Code.scss';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { io } from 'socket.io-client';
 import { useSingleFile } from './Overlay';
 
 const Code = () => {
@@ -26,9 +25,9 @@ const Code = () => {
 					`${process.env.REACT_APP_API_URI}/api/code-dir-check/${dirId}`
 				);
 			} catch (error: any) {
-				console.log(error);
+				console.error(error.message);
 				if (error instanceof AxiosError) {
-					setServerError(error.message);
+					setServerError(error.response?.data || 'Unknown server error.');
 				} else {
 					setServerError('Unknown server error.');
 				}
@@ -76,9 +75,9 @@ const Code = () => {
 			setServerError(null);
 			setSuccess(true);
 		} catch (error: any) {
-			console.log(error);
+			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setServerError(error.message);
+				setServerError(error.response?.data || 'Unknown server error.');
 			} else {
 				setServerError('Unknown server error.');
 			}
