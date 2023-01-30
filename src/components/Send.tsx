@@ -68,9 +68,9 @@ const Send = () => {
 			setFileList(null);
 			setUploadError(null);
 		} catch (error: any) {
-			console.log(error);
+			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setUploadError(error.message);
+				setUploadError(error.response?.data || 'Unknown server error.');
 			} else {
 				setUploadError('Unknown server error.');
 			}
