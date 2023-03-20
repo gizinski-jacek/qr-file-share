@@ -1,8 +1,9 @@
 .overlay {
-	width: 50%;
-	margin: 1rem;
+	min-width: 50%;
+	margin: 1rem auto;
 	display: flex;
 	justify-content: space-between;
+	gap: 2rem;
 }
 
 .home-link {
