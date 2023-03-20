@@ -3,20 +3,15 @@ import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import axios, { AxiosError } from 'axios';
 import { io } from 'socket.io-client';
-import { Socket } from 'socket.io-client';
-
-export type SocketType = Socket<ServerToClientEvents>;
-
-interface ServerToClientEvents {
-	oops: (error: any) => void;
-	new_file_alert: (data: {}) => void;
-}
+import { RemoteFile, SocketType } from '../types';
+import { FileIcon } from 'react-file-icon';
+import prettyBytes from 'pretty-bytes';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
 	const [codeError, setCodeError] = useState<string | null>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
-	const [fileList, setFileList] = useState<{} | null>(null);
+	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 
 	useEffect(() => {
 		(async () => {
@@ -56,7 +51,7 @@ const Receive = () => {
 		});
 
 		socket.on('new_file_alert', (data) => {
-			setFileList(data);
+			setRemoteFiles(data);
 		});
 
 		return () => {
@@ -66,14 +61,31 @@ const Receive = () => {
 
 	return !codeError ? (
 		<div className='receive'>
-			{dirId && (
-				<div className='qr-code' aria-label='qr code'>
-					<QRCodeSVG
-						value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
-					/>
+			<div className='form-container'>
+				{dirId && (
+					<div className='qr-code' aria-label='qr code'>
+						<QRCodeSVG
+							value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
+						/>
+					</div>
+				)}
+				{dirId && <div className='directory-id'>{dirId}</div>}
+			</div>
+			{remoteFiles.length > 0 && (
+				<div className='received-file-list'>
+					{remoteFiles.map((file, i) => (
+						<div key={i}>
+							<a href={file.url} target='_blank' rel='noreferrer'>
+								<FileIcon extension={file.extension} />
+								<div>
+									<div>{file.name}</div>
+									<div>{prettyBytes(file.size)}</div>
+								</div>
+							</a>
+						</div>
+					))}
 				</div>
 			)}
-			{dirId && <div className='dirId-div'>{dirId}</div>}
 		</div>
 	) : (
 		<div>{codeError}</div>
