@@ -1,22 +1,77 @@
 .code {
+	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
-	gap: 2rem;
-}
+	gap: 3rem;
 
-.add-icon,
+	.form-container {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.add-icon,
 	.checkmark-icon {
 		display: block;
 		width: 160px;
 		height: 160px;
-		cursor:pointer;
+		cursor: pointer;
 		transition: 0.1s ease-in-out;
 
-		&:hover svg { 
+		&:hover svg {
 			fill: rgba(255, 255, 255, 0.1);
-		 }
+		}
+	}
+
+	.upload-list {
+		width: 75%;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin: 1rem 0;
+
+		> div {
+			display: flex;
+			align-items: center;
+		}
+
+		svg {
+			width: 40px;
+			height: 40px;
+		}
+	}
+
+	.received-file-list {
+		width: 75%;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 1rem;
+		margin: 1rem 0;
+
+		a {
+			display: flex;
+			align-items: center;
+			padding: 0.5rem;
+			border-radius: 0.5rem;
+			gap: 0.25rem;
+			font-size: 1rem;
+			line-height: 1.25rem;
+		}
+
+		svg {
+			width: 40px;
+			height: 40px;
+		}
+	}
+
+	.errors {
+		color: rgb(255, 0, 0);
+		font-weight: 600;
 	}
 
 	button {
@@ -30,10 +85,25 @@
 		height: 0;
 	}
 
-	.dirId-div {
+	.directory-id {
 		padding: 1rem;
 		border: 4px solid rgb(255, 255, 255);
 		border-radius: 1rem;
 		font-weight: 600;
 	}
-	
+
+	.received-file-list {
+		a {
+			display: flex;
+			padding: 0.5rem;
+			border-radius: 0.5rem;
+			gap: 0.25rem;
+			font-size: 1rem;
+		}
+
+		svg {
+			width: 40px;
+			height: 40px;
+		}
+	}
+}
