@@ -48,7 +48,7 @@ const Send = () => {
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		try {
-			if (!fileList) return;
+			if (!fileList || !!fileListErrors) return;
 			const uploadData = new FormData();
 			if (singleFile) {
 				uploadData.append('file', fileList[0]);
@@ -151,7 +151,9 @@ const Send = () => {
 								{Array.from(fileList).map((file, i) => {
 									return (
 										<div key={i}>
-											<FileIcon extension={file.name.slice(-3)} />
+											<FileIcon
+												extension={file.name.slice(file.name.lastIndexOf('.'))}
+											/>
 											<div>
 												<div>{file.name}</div>
 												<div>{prettyBytes(file.size)}</div>
