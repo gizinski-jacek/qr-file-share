@@ -1,7 +1,7 @@
 import '../styles/Code.scss';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSingleFile } from './Overlay';
 import { io } from 'socket.io-client';
 import { RemoteFile, SocketType } from '../types';
@@ -18,6 +18,7 @@ const Code = () => {
 	const { singleFile } = useSingleFile();
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		setFileList(null);
@@ -28,11 +29,15 @@ const Code = () => {
 		(async () => {
 			try {
 				if (!dirId || dirId.length !== 6) {
+					setServerError(`Invalid code. Redirecting...`);
+					const timeout = setTimeout(() => {
+						navigate('/');
+					}, 3000);
+					return () => clearTimeout(timeout);
 				} else {
 					const res = await axios.get(
 						`${process.env.REACT_APP_API_URI}/api/code-dir-check/${dirId}`
 					);
-					console.log(res.data);
 					const newSocket = io(
 						`${process.env.REACT_APP_API_URI}/notifications`,
 						{ query: { code: dirId }, transports: ['websocket'] }
@@ -50,7 +55,7 @@ const Code = () => {
 				}
 			}
 		})();
-	}, [dirId]);
+	}, [dirId, navigate]);
 
 	useEffect(() => {
 		if (!socket) {
@@ -125,7 +130,7 @@ const Code = () => {
 			<div className='form-container'>
 				{fileList ? (
 					<div
-						className='checkmark-icon'
+						className='status-icon'
 						onClick={clickSelectFile}
 						aria-label='file selected'
 					>
@@ -145,7 +150,7 @@ const Code = () => {
 					</div>
 				) : (
 					<div
-						className='add-icon'
+						className='status-icon'
 						onClick={clickSelectFile}
 						aria-label='select file to upload'
 					>
@@ -164,7 +169,7 @@ const Code = () => {
 						</svg>
 					</div>
 				)}
-				{success && <div>Files uploaded successfully.</div>}
+				{success && <h2>Files uploaded successfully.</h2>}
 				{fileListErrors && (
 					<div className='errors'>
 						{fileListErrors.map((error, i) => (
@@ -174,7 +179,7 @@ const Code = () => {
 				)}
 				{fileList && (
 					<>
-						<div>Uploading files:</div>
+						<h2>Selected files:</h2>
 						<div className='upload-list'>
 							{Array.from(fileList).map((file, i) => {
 								return (
@@ -182,10 +187,10 @@ const Code = () => {
 										<FileIcon
 											extension={file.name.slice(file.name.lastIndexOf('.'))}
 										/>
-										<div>
+										<span>
 											<div>{file.name}</div>
 											<div>{prettyBytes(file.size)}</div>
-										</div>
+										</span>
 									</div>
 								);
 							})}
@@ -213,18 +218,21 @@ const Code = () => {
 				</button>
 			</div>
 			{remoteFiles.length > 0 && (
-				<div className='received-file-list'>
-					{remoteFiles.map((file, i) => (
-						<div key={i}>
-							<a href={file.url} target='_blank' rel='noreferrer'>
-								<FileIcon extension={file.extension} />
-								<div>
-									<div>{file.name}</div>
-									<div>{prettyBytes(file.size)}</div>
-								</div>
-							</a>
-						</div>
-					))}
+				<div className='uploaded'>
+					<h2>Uploaded files:</h2>
+					<div className='uploaded-file-list'>
+						{remoteFiles.map((file, i) => (
+							<div key={i}>
+								<a href={file.url} target='_blank' rel='noreferrer'>
+									<FileIcon extension={file.extension} />
+									<div>
+										<div>{file.name}</div>
+										<div>{prettyBytes(file.size)}</div>
+									</div>
+								</a>
+							</div>
+						))}
+					</div>
 				</div>
 			)}
 		</div>
