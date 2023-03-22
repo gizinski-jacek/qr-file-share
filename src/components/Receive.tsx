@@ -72,18 +72,21 @@ const Receive = () => {
 				{dirId && <div className='directory-id'>{dirId}</div>}
 			</div>
 			{remoteFiles.length > 0 && (
-				<div className='received-file-list'>
-					{remoteFiles.map((file, i) => (
-						<div key={i}>
-							<a href={file.url} target='_blank' rel='noreferrer'>
-								<FileIcon extension={file.extension} />
-								<div>
-									<div>{file.name}</div>
-									<div>{prettyBytes(file.size)}</div>
-								</div>
-							</a>
-						</div>
-					))}
+				<div className='uploaded'>
+					<h2>Uploaded files:</h2>
+					<div className='uploaded-file-list'>
+						{remoteFiles.map((file, i) => (
+							<div key={i}>
+								<a href={file.url} target='_blank' rel='noreferrer'>
+									<FileIcon extension={file.extension} />
+									<div>
+										<div>{file.name}</div>
+										<div>{prettyBytes(file.size)}</div>
+									</div>
+								</a>
+							</div>
+						))}
+					</div>
 				</div>
 			)}
 		</div>

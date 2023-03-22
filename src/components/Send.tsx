@@ -98,7 +98,7 @@ const Send = () => {
 				<div className='form-container'>
 					{fileList ? (
 						<div
-							className='checkmark-icon'
+							className='status-icon'
 							onClick={clickSelectFile}
 							aria-label='file selected'
 						>
@@ -118,7 +118,7 @@ const Send = () => {
 						</div>
 					) : (
 						<div
-							className='add-icon'
+							className='status-icon'
 							onClick={clickSelectFile}
 							aria-label='select file to upload'
 						>
@@ -146,7 +146,7 @@ const Send = () => {
 					)}
 					{fileList && (
 						<>
-							<div>Uploading files:</div>
+							<h2>Selected files:</h2>
 							<div className='upload-list'>
 								{Array.from(fileList).map((file, i) => {
 									return (
@@ -154,10 +154,10 @@ const Send = () => {
 											<FileIcon
 												extension={file.name.slice(file.name.lastIndexOf('.'))}
 											/>
-											<div>
+											<span>
 												<div>{file.name}</div>
 												<div>{prettyBytes(file.size)}</div>
-											</div>
+											</span>
 										</div>
 									);
 								})}
