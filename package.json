@@ -48,6 +48,7 @@
 		]
 	},
 	"devDependencies": {
+		"@types/axios": "^0.14.0",
 		"@types/react-file-icon": "^1.0.1"
 	}
 }
