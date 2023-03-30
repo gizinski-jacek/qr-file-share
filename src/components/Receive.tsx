@@ -1,4 +1,4 @@
-import '../styles/Receive.scss';
+import '../styles/Receive.module.scss';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import axios, { AxiosError } from 'axios';
@@ -9,7 +9,7 @@ import prettyBytes from 'pretty-bytes';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
-	const [codeError, setCodeError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 
@@ -22,10 +22,8 @@ const Receive = () => {
 				const newSocket = io(`${process.env.REACT_APP_API_URI}/notifications`, {
 					query: { code: res.data },
 				});
-
 				setDirId(res.data);
 				setSocket(newSocket);
-
 				return () => {
 					newSocket.disconnect();
 				};
@@ -33,9 +31,9 @@ const Receive = () => {
 				console.error(error.message);
 				setDirId(null);
 				if (error instanceof AxiosError) {
-					setCodeError(error.response?.data || 'Unknown server error.');
+					setError(error.response?.data || 'Unknown server error.');
 				} else {
-					setCodeError('Unknown server error.');
+					setError('Unknown server error.');
 				}
 			}
 		})();
@@ -59,7 +57,7 @@ const Receive = () => {
 		};
 	}, [socket]);
 
-	return !codeError ? (
+	return !error ? (
 		<div className='receive'>
 			<div className='form-container'>
 				{dirId && (
@@ -72,11 +70,11 @@ const Receive = () => {
 				{dirId && <div className='directory-id'>{dirId}</div>}
 			</div>
 			{remoteFiles.length > 0 && (
-				<div className='uploaded'>
+				<div className='server'>
 					<h2>Uploaded files:</h2>
-					<div className='uploaded-file-list'>
+					<div className='server-file-list'>
 						{remoteFiles.map((file, i) => (
-							<div key={i}>
+							<div className='file' key={i}>
 								<a href={file.url} target='_blank' rel='noreferrer'>
 									<FileIcon extension={file.extension} />
 									<div>
@@ -84,6 +82,7 @@ const Receive = () => {
 										<div>{prettyBytes(file.size)}</div>
 									</div>
 								</a>
+								<div className='tooltip'>{file.name}</div>
 							</div>
 						))}
 					</div>
@@ -91,7 +90,7 @@ const Receive = () => {
 			)}
 		</div>
 	) : (
-		<div>{codeError}</div>
+		<div>{error}</div>
 	);
 };
 
