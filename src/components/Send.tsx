@@ -1,4 +1,4 @@
-import '../styles/Send.scss';
+import '../styles/Send.module.scss';
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
@@ -11,7 +11,7 @@ const Send = () => {
 	const [fileList, setFileList] = useState<FileList | null>(null);
 	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
-	const [uploadError, setUploadError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const ref = useRef<HTMLInputElement>(null);
 	const { singleFile } = useSingleFile();
 
@@ -50,37 +50,27 @@ const Send = () => {
 		try {
 			if (!fileList || !!fileListErrors) return;
 			const uploadData = new FormData();
-			if (singleFile) {
-				uploadData.append('file', fileList[0]);
-				const res = await axios.post(
-					`${process.env.REACT_APP_API_URI}/api/send-single-file`,
-					uploadData
-				);
-				setRemoteFiles(res.data);
+			for (let i = 0; i < fileList.length; i++) {
+				uploadData.append('files', fileList[i]);
 			}
-			if (!singleFile) {
-				for (let i = 0; i < fileList.length; i++) {
-					uploadData.append('files', fileList[i]);
-				}
-				const res = await axios.post(
-					`${process.env.REACT_APP_API_URI}/api/send-multiple-files`,
-					uploadData
-				);
-				setRemoteFiles(res.data);
-			}
+			const res = await axios.post(
+				`${process.env.REACT_APP_API_URI}/api/send-files`,
+				uploadData
+			);
+			setRemoteFiles(res.data);
 			setFileList(null);
-			setUploadError(null);
+			setError(null);
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setUploadError(error.response?.data || 'Unknown server error.');
+				setError(error.response?.data || 'Unknown server error.');
 			} else {
-				setUploadError('Unknown server error.');
+				setError('Unknown server error.');
 			}
 		}
 	};
 
-	return !uploadError ? (
+	return !error ? (
 		<div className='send'>
 			{remoteFiles.length > 0 ? (
 				<div className='qr-code-list'>
@@ -187,7 +177,7 @@ const Send = () => {
 			)}
 		</div>
 	) : (
-		<div>{uploadError}</div>
+		<div>{error}</div>
 	);
 };
 
