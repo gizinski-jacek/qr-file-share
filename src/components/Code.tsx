@@ -1,4 +1,4 @@
-import '../styles/Code.scss';
+import '../styles/Code.module.scss';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,7 +12,7 @@ const Code = () => {
 	const { dirId } = useParams();
 	const [fileList, setFileList] = useState<FileList | null>(null);
 	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
-	const [serverError, setServerError] = useState<string | null>(null);
+	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
 	const { singleFile } = useSingleFile();
@@ -29,7 +29,7 @@ const Code = () => {
 		(async () => {
 			try {
 				if (!dirId || dirId.length !== 6) {
-					setServerError(`Invalid code. Redirecting...`);
+					setError(`Invalid code. Redirecting...`);
 					const timeout = setTimeout(() => {
 						navigate('/');
 					}, 3000);
@@ -49,9 +49,9 @@ const Code = () => {
 			} catch (error: any) {
 				console.error(error.message);
 				if (error instanceof AxiosError) {
-					setServerError(error.response?.data || 'Unknown server error.');
+					setError(error.response?.data || 'Unknown server error.');
 				} else {
-					setServerError('Unknown server error.');
+					setError('Unknown server error.');
 				}
 			}
 		})();
@@ -113,19 +113,19 @@ const Code = () => {
 				uploadData
 			);
 			setFileList(null);
-			setServerError(null);
+			setError(null);
 			setSuccess(true);
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setServerError(error.response?.data || 'Unknown server error.');
+				setError(error.response?.data || 'Unknown server error.');
 			} else {
-				setServerError('Unknown server error.');
+				setError('Unknown server error.');
 			}
 		}
 	};
 
-	return !serverError ? (
+	return !error ? (
 		<div className='code'>
 			<div className='form-container'>
 				{fileList ? (
@@ -218,11 +218,11 @@ const Code = () => {
 				</button>
 			</div>
 			{remoteFiles.length > 0 && (
-				<div className='uploaded'>
+				<div className='server'>
 					<h2>Uploaded files:</h2>
-					<div className='uploaded-file-list'>
+					<div className='server-file-list'>
 						{remoteFiles.map((file, i) => (
-							<div key={i}>
+							<div className='file' key={i}>
 								<a href={file.url} target='_blank' rel='noreferrer'>
 									<FileIcon extension={file.extension} />
 									<div>
@@ -230,6 +230,7 @@ const Code = () => {
 										<div>{prettyBytes(file.size)}</div>
 									</div>
 								</a>
+								<div className='tooltip'>{file.name}</div>
 							</div>
 						))}
 					</div>
@@ -237,7 +238,7 @@ const Code = () => {
 			)}
 		</div>
 	) : (
-		<div>{serverError}</div>
+		<div>{error}</div>
 	);
 };
 
