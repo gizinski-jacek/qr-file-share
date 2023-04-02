@@ -1,4 +1,4 @@
-import '../styles/Overlay.module.scss';
+import '../styles/Overlay.scss';
 import { useState } from 'react';
 import { NavLink, Outlet, useMatch, useOutletContext } from 'react-router-dom';
 
