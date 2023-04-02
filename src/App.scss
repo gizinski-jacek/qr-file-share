@@ -1,10 +1,15 @@
 :root {
+	--c-black: rgb(0, 0, 0);
 	--c-white: rgb(255, 255, 255);
 	--c-white-10: rgba(255, 255, 255, 0.1);
 	--c-white-20: rgba(255, 255, 255, 0.2);
 	--c-purple: rgb(100, 0, 200);
 	--c-green: rgb(0, 200, 50);
 	--c-red: rgb(255, 0, 0);
+}
+
+* {
+	box-sizing: border-box !important;
 }
 
 a {
@@ -57,8 +62,10 @@ button {
 
 svg {
 	display: block;
-	width: 40px;
-	height: 40px;
+	width: 48px;
+	height: 48px;
+	min-width: 48px;
+	min-height: 48px;
 	transition: 0.25s ease-in-out;
 	fill: transparent;
 
@@ -75,10 +82,11 @@ h2 {
 	font-size: 1.5rem;
 	font-weight: 600;
 	user-select: none;
+	text-align: center;
 }
 
 .app {
-	height: 100vh;
+	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -87,6 +95,14 @@ h2 {
 	font-family: sans-serif;
 	color: var(--c-white);
 	background: linear-gradient(var(--c-green), var(--c-purple));
+}
+
+.error {
+	background-color: var(--c-white);
+	color: var(--c-red);
+	border-radius: 8px;
+	padding: 0.5rem;
+	font-weight: 600;
 }
 
 .home {
