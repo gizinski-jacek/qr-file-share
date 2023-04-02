@@ -1,4 +1,4 @@
-import '../styles/Receive.module.scss';
+import '../styles/Routes.scss';
 import { useEffect, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import axios, { AxiosError } from 'axios';
@@ -58,7 +58,7 @@ const Receive = () => {
 	}, [socket]);
 
 	return !error ? (
-		<div className='receive'>
+		<div className='container'>
 			<div className='form-container'>
 				{dirId && (
 					<div className='qr-code' aria-label='qr code'>
@@ -75,14 +75,19 @@ const Receive = () => {
 					<div className='server-file-list'>
 						{remoteFiles.map((file, i) => (
 							<div className='file' key={i}>
-								<a href={file.url} target='_blank' rel='noreferrer'>
+								<a
+									href={file.url}
+									className='file-details'
+									target='_blank'
+									rel='noreferrer'
+								>
 									<FileIcon extension={file.extension} />
-									<div>
+									<span>
 										<div>{file.name}</div>
 										<div>{prettyBytes(file.size)}</div>
-									</div>
+									</span>
 								</a>
-								<div className='tooltip'>{file.name}</div>
+								<span className='tooltip'>{file.name}</span>
 							</div>
 						))}
 					</div>

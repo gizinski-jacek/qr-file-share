@@ -1,4 +1,4 @@
-import '../styles/Code.module.scss';
+import '../styles/Routes.scss';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -126,7 +126,7 @@ const Code = () => {
 	};
 
 	return !error ? (
-		<div className='code'>
+		<div className='container'>
 			<div className='form-container'>
 				{fileList ? (
 					<div
@@ -171,7 +171,7 @@ const Code = () => {
 				)}
 				{success && <h2>Files uploaded successfully.</h2>}
 				{fileListErrors && (
-					<div className='errors'>
+					<div className='error'>
 						{fileListErrors.map((error, i) => (
 							<div key={i}>{error}</div>
 						))}
@@ -183,14 +183,17 @@ const Code = () => {
 						<div className='upload-list'>
 							{Array.from(fileList).map((file, i) => {
 								return (
-									<div key={i}>
-										<FileIcon
-											extension={file.name.slice(file.name.lastIndexOf('.'))}
-										/>
-										<span>
-											<div>{file.name}</div>
-											<div>{prettyBytes(file.size)}</div>
-										</span>
+									<div className='file' key={i}>
+										<div className='file-details'>
+											<FileIcon
+												extension={file.name.slice(file.name.lastIndexOf('.'))}
+											/>
+											<span>
+												<div>{file.name}</div>
+												<div>{prettyBytes(file.size)}</div>
+											</span>
+										</div>
+										<div className='tooltip'>{file.name}</div>
 									</div>
 								);
 							})}
@@ -223,14 +226,19 @@ const Code = () => {
 					<div className='server-file-list'>
 						{remoteFiles.map((file, i) => (
 							<div className='file' key={i}>
-								<a href={file.url} target='_blank' rel='noreferrer'>
+								<a
+									href={file.url}
+									className='file-details'
+									target='_blank'
+									rel='noreferrer'
+								>
 									<FileIcon extension={file.extension} />
-									<div>
+									<span>
 										<div>{file.name}</div>
 										<div>{prettyBytes(file.size)}</div>
-									</div>
+									</span>
 								</a>
-								<div className='tooltip'>{file.name}</div>
+								<span className='tooltip'>{file.name}</span>
 							</div>
 						))}
 					</div>
@@ -238,7 +246,7 @@ const Code = () => {
 			)}
 		</div>
 	) : (
-		<div>{error}</div>
+		<div className='error'>{error}</div>
 	);
 };
 

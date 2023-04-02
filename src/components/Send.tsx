@@ -1,4 +1,4 @@
-import '../styles/Send.module.scss';
+import '../styles/Routes.scss';
 import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
@@ -71,15 +71,20 @@ const Send = () => {
 	};
 
 	return !error ? (
-		<div className='send'>
+		<div className='container'>
 			{remoteFiles.length > 0 ? (
 				<div className='qr-code-list'>
 					{remoteFiles.map((file, i) => (
-						<div key={i} className='qr-code' aria-label='qr code'>
-							<QRCodeSVG value={file.url} />
-							<div>
-								<div>{file.name}</div>
-								<div>{prettyBytes(file.size)}</div>
+						<div className='file'>
+							<div key={i} className='qr-code' aria-label='qr code'>
+								<QRCodeSVG value={file.url} />
+								<div className='file-details'>
+									<FileIcon extension={file.extension} />
+									<span>
+										<div>{file.name}</div>
+										<div>{prettyBytes(file.size)}</div>
+									</span>
+								</div>
 							</div>
 						</div>
 					))}
@@ -128,7 +133,7 @@ const Send = () => {
 						</div>
 					)}
 					{fileListErrors && (
-						<div className='errors'>
+						<div className='error'>
 							{fileListErrors.map((error, i) => (
 								<div key={i}>{error}</div>
 							))}
@@ -140,14 +145,19 @@ const Send = () => {
 							<div className='upload-list'>
 								{Array.from(fileList).map((file, i) => {
 									return (
-										<div key={i}>
-											<FileIcon
-												extension={file.name.slice(file.name.lastIndexOf('.'))}
-											/>
-											<span>
-												<div>{file.name}</div>
-												<div>{prettyBytes(file.size)}</div>
-											</span>
+										<div className='file' key={i}>
+											<div className='file-details'>
+												<FileIcon
+													extension={file.name.slice(
+														file.name.lastIndexOf('.')
+													)}
+												/>
+												<span>
+													<div>{file.name}</div>
+													<div>{prettyBytes(file.size)}</div>
+												</span>
+												<span className='tooltip'>{file.name}</span>
+											</div>
 										</div>
 									);
 								})}
@@ -177,7 +187,7 @@ const Send = () => {
 			)}
 		</div>
 	) : (
-		<div>{error}</div>
+		<div className='error'>{error}</div>
 	);
 };
 
