@@ -2,7 +2,6 @@ import '../styles/Routes.scss';
 import axios, { AxiosError } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSingleFile } from './Overlay';
 import { io } from 'socket.io-client';
 import { RemoteFile, SocketType } from '../types';
 import { FileIcon } from 'react-file-icon';
@@ -15,15 +14,9 @@ const Code = () => {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
-	const { singleFile } = useSingleFile();
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		setFileList(null);
-		setFileListErrors(null);
-	}, [singleFile]);
 
 	useEffect(() => {
 		(async () => {
@@ -125,6 +118,10 @@ const Code = () => {
 		}
 	};
 
+	const handleClearList = () => {
+		setFileList(null);
+	};
+
 	return !error ? (
 		<div className='container'>
 			<div className='form-container'>
@@ -207,18 +204,26 @@ const Code = () => {
 						id='file'
 						name='file'
 						type='file'
-						multiple={!singleFile}
+						multiple={true}
 						onChange={handleFileSelect}
 					/>
 				</form>
-				<button
-					className='send-btn'
-					type='button'
-					onClick={handleFileUpload}
-					disabled={!fileList || !!fileListErrors}
-				>
-					Send
-				</button>
+				<div className='list-controls'>
+					<button
+						type='button'
+						onClick={handleFileUpload}
+						disabled={!fileList || !!fileListErrors}
+					>
+						Send
+					</button>
+					<button
+						type='button'
+						onClick={handleClearList}
+						disabled={!fileList || !!fileListErrors}
+					>
+						Clear
+					</button>
+				</div>
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>

@@ -1,8 +1,7 @@
 import '../styles/Routes.scss';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
-import { useSingleFile } from './Overlay';
 import { RemoteFile } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
@@ -13,13 +12,6 @@ const Send = () => {
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const ref = useRef<HTMLInputElement>(null);
-	const { singleFile } = useSingleFile();
-
-	useEffect(() => {
-		setFileList(null);
-		setFileListErrors(null);
-		setRemoteFiles([]);
-	}, [singleFile]);
 
 	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -68,6 +60,10 @@ const Send = () => {
 				setError('Unknown server error.');
 			}
 		}
+	};
+
+	const handleClearList = () => {
+		setFileList(null);
 	};
 
 	return !error ? (
@@ -171,18 +167,26 @@ const Send = () => {
 							id='file'
 							name='file'
 							type='file'
-							multiple={!singleFile}
+							multiple={true}
 							onChange={handleFileSelect}
 						/>
 					</form>
-					<button
-						className='send-btn'
-						type='button'
-						onClick={handleFileUpload}
-						disabled={!fileList || !!fileListErrors}
-					>
-						Send
-					</button>
+					<div className='list-controls'>
+						<button
+							type='button'
+							onClick={handleFileUpload}
+							disabled={!fileList || !!fileListErrors}
+						>
+							Send
+						</button>
+						<button
+							type='button'
+							onClick={handleClearList}
+							disabled={!fileList || !!fileListErrors}
+						>
+							Clear
+						</button>
+					</div>
 				</div>
 			)}
 		</div>
