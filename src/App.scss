@@ -1,8 +1,8 @@
 :root {
 	--c-black: rgb(0, 0, 0);
 	--c-white: rgb(255, 255, 255);
-	--c-white-10: rgba(255, 255, 255, 0.1);
-	--c-white-20: rgba(255, 255, 255, 0.2);
+	--c-white-15: rgba(255, 255, 255, 0.15);
+	--c-white-30: rgba(255, 255, 255, 0.3);
 	--c-purple: rgb(100, 0, 200);
 	--c-green: rgb(0, 200, 50);
 	--c-red: rgb(235, 0, 0);
@@ -26,11 +26,11 @@ a {
 	cursor: pointer;
 
 	&:hover {
-		background-color: var(--c-white-10);
+		background-color: var(--c-white-15);
 	}
 
 	&:active {
-		background-color: var(--c-white-20);
+		background-color: var(--c-white-30);
 	}
 }
 
@@ -51,11 +51,11 @@ button {
 	transition: 0.25s ease-in-out;
 
 	&:hover:not(:disabled) {
-		background-color: var(--c-white-10);
+		background-color: var(--c-white-15);
 	}
 
 	&:active:not(:disabled) {
-		background-color: var(--c-white-20);
+		background-color: var(--c-white-30);
 	}
 
 	&:disabled {
@@ -74,11 +74,11 @@ svg {
 	fill: transparent;
 
 	&:hover {
-		fill: var(--c-white-10);
+		fill: var(--c-white-15);
 	}
 
 	&:active {
-		fill: var(--c-white-20);
+		fill: var(--c-white-30);
 	}
 }
 
