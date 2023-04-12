@@ -177,7 +177,7 @@ const Code = () => {
 				{fileList && (
 					<>
 						<h2>Selected files:</h2>
-						<div className='upload-list'>
+						<div className='file-list'>
 							{Array.from(fileList).map((file, i) => {
 								return (
 									<div className='file' key={i}>
@@ -228,7 +228,7 @@ const Code = () => {
 			{remoteFiles.length > 0 && (
 				<div className='server'>
 					<h2>Uploaded files:</h2>
-					<div className='server-file-list'>
+					<div className='file-list'>
 						{remoteFiles.map((file, i) => (
 							<div className='file' key={i}>
 								<a

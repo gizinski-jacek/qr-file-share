@@ -138,7 +138,7 @@ const Send = () => {
 					{fileList && (
 						<>
 							<h2>Selected files:</h2>
-							<div className='upload-list'>
+							<div className='file-list'>
 								{Array.from(fileList).map((file, i) => {
 									return (
 										<div className='file' key={i}>
