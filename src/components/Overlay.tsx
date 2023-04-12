@@ -1,22 +1,14 @@
 import '../styles/Overlay.scss';
-import { useState } from 'react';
-import { NavLink, Outlet, useMatch, useOutletContext } from 'react-router-dom';
+import { NavLink, Outlet, useOutletContext } from 'react-router-dom';
 
 interface ContextType {
 	singleFile: boolean;
 }
 
 const Overlay = () => {
-	const [singleFile, setSingleFile] = useState<boolean>(true);
-	const path = useMatch('/receive');
-
-	const setSingle = () => setSingleFile(true);
-
-	const setMultiple = () => setSingleFile(false);
-
 	return (
 		<>
-			<Outlet context={{ singleFile }} />
+			<Outlet />
 			<div className='overlay'>
 				<NavLink className='home-link' aria-label='home page link' to=''>
 					<svg
@@ -41,24 +33,6 @@ const Overlay = () => {
 					</svg>
 					Home
 				</NavLink>
-				{!path && (
-					<div className='modes'>
-						<button
-							className={singleFile ? 'active' : ''}
-							type='button'
-							onClick={setSingle}
-						>
-							Single
-						</button>
-						<button
-							className={!singleFile ? 'active' : ''}
-							type='button'
-							onClick={setMultiple}
-						>
-							Multiple
-						</button>
-					</div>
-				)}
 			</div>
 		</>
 	);
