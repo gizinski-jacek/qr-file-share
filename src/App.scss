@@ -5,11 +5,15 @@
 	--c-white-20: rgba(255, 255, 255, 0.2);
 	--c-purple: rgb(100, 0, 200);
 	--c-green: rgb(0, 200, 50);
-	--c-red: rgb(255, 0, 0);
+	--c-red: rgb(235, 0, 0);
 }
 
 * {
 	box-sizing: border-box !important;
+}
+
+body {
+	overflow-x: hidden;
 }
 
 a {
@@ -62,9 +66,9 @@ button {
 
 svg {
 	display: block;
-	width: 48px;
+	width: 42px;
 	height: 48px;
-	min-width: 48px;
+	min-width: 42px;
 	min-height: 48px;
 	transition: 0.25s ease-in-out;
 	fill: transparent;
@@ -86,6 +90,7 @@ h2 {
 }
 
 .app {
+	min-width: 280px;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
@@ -107,6 +112,7 @@ h2 {
 
 .home {
 	display: flex;
+	flex-direction: column;
 	gap: 5rem;
 
 	a {
@@ -124,5 +130,11 @@ h2 {
 		width: 160px;
 		height: 160px;
 		fill: var(--c-white);
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.home {
+		flex-direction: row;
 	}
 }
