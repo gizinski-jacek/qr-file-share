@@ -71,7 +71,7 @@ const Receive = () => {
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>
-					<h2>Uploaded files:</h2>
+					<h3>Uploaded files:</h3>
 					<div className='file-list'>
 						{remoteFiles.map((file, i) => (
 							<div className='file' key={i}>
