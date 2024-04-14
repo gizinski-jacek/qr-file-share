@@ -83,6 +83,14 @@ svg {
 }
 
 h2 {
+	font-size: 2rem;
+	font-weight: 600;
+	margin: 0.5rem;
+	user-select: none;
+	text-align: center;
+}
+
+h3 {
 	font-size: 1.5rem;
 	font-weight: 600;
 	user-select: none;
@@ -94,9 +102,8 @@ h2 {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
-	gap: 2rem;
+	gap: 3rem;
 	font-family: sans-serif;
 	color: var(--c-white);
 	background: linear-gradient(var(--c-green), var(--c-purple));
@@ -130,6 +137,19 @@ h2 {
 		width: 160px;
 		height: 160px;
 		fill: var(--c-white);
+	}
+}
+
+.folder-link {
+	display: block;
+	margin-top: 0.5rem;
+	padding: 0.5rem;
+	border: 2px solid var(--c-white);
+	border-radius: 0.5rem;
+	user-select: none;
+
+	span {
+		text-decoration: underline;
 	}
 }
 
