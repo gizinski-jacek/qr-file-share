@@ -5,12 +5,15 @@ import { QRCodeSVG } from 'qrcode.react';
 import { RemoteFile } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
+import { NavLink } from 'react-router-dom';
 
 const Send = () => {
+	const [dirId, setDirId] = useState<string | null>(null);
 	const [fileList, setFileList] = useState<FileList | null>(null);
 	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
 
 	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -35,6 +38,7 @@ const Send = () => {
 		}
 		setFileListErrors(null);
 		setFileList(files);
+		setSuccess(false);
 	};
 
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -49,9 +53,11 @@ const Send = () => {
 				`${process.env.REACT_APP_API_URI}/api/send-files`,
 				uploadData
 			);
-			setRemoteFiles(res.data);
+			setRemoteFiles(res.data.fileList);
+			setDirId(res.data.code);
 			setFileList(null);
 			setError(null);
+			setSuccess(true);
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
@@ -68,19 +74,38 @@ const Send = () => {
 
 	return !error ? (
 		<div className='container'>
+			{success && dirId && (
+				<div>
+					<h3>Files uploaded successfully.</h3>
+					<NavLink
+						className='folder-link'
+						to={`../code/${dirId}`}
+						aria-label='go to folder'
+					>
+						<h3>
+							Go to your folder: <span>{dirId}</span>
+						</h3>
+					</NavLink>
+				</div>
+			)}
 			{remoteFiles.length > 0 ? (
 				<div className='qr-code-list'>
 					{remoteFiles.map((file, i) => (
-						<div className='file'>
-							<div key={i} className='qr-code' aria-label='qr code'>
+						<div key={i} className='file'>
+							<div className='qr-code' aria-label='qr code'>
 								<QRCodeSVG value={file.url} />
-								<div className='file-details'>
+								<a
+									href={file.url}
+									className='file-details'
+									target='_blank'
+									rel='noreferrer'
+								>
 									<FileIcon extension={file.extension} />
 									<span>
 										<div>{file.name}</div>
 										<div>{prettyBytes(file.size)}</div>
 									</span>
-								</div>
+								</a>
 							</div>
 						</div>
 					))}
@@ -137,7 +162,7 @@ const Send = () => {
 					)}
 					{fileList && (
 						<>
-							<h2>Selected files:</h2>
+							<h3>Selected files:</h3>
 							<div className='file-list'>
 								{Array.from(fileList).map((file, i) => {
 									return (
