@@ -166,7 +166,7 @@ const Code = () => {
 						</svg>
 					</div>
 				)}
-				{success && <h2>Files uploaded successfully.</h2>}
+				{success && <h3>Files uploaded successfully.</h3>}
 				{fileListErrors && (
 					<div className='error'>
 						{fileListErrors.map((error, i) => (
@@ -176,7 +176,7 @@ const Code = () => {
 				)}
 				{fileList && (
 					<>
-						<h2>Selected files:</h2>
+						<h3>Selected files:</h3>
 						<div className='file-list'>
 							{Array.from(fileList).map((file, i) => {
 								return (
@@ -227,7 +227,7 @@ const Code = () => {
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>
-					<h2>Uploaded files:</h2>
+					<h3>Uploaded files:</h3>
 					<div className='file-list'>
 						{remoteFiles.map((file, i) => (
 							<div className='file' key={i}>
