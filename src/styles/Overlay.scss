@@ -1,18 +1,9 @@
-.overlay {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	transform-origin: center;
-}
-
 .home-link {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	font-size: 1rem;
-	padding: 0.1rem 0.25rem;
-	font-size: 1rem;
+	font-size: 1.5rem;
+	padding: 0.25rem 0.5rem;
 	border: 3px solid var(--c-white);
 	border-radius: 0.5rem;
 	border-top-left-radius: 0;
@@ -21,8 +12,8 @@
 	user-select: none;
 
 	svg {
-		width: 28px;
-		height: 28px;
+		width: 32px;
+		height: 32px;
 		min-width: unset;
 		min-height: unset;
 	}
