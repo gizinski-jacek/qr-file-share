@@ -8,7 +8,6 @@ interface ContextType {
 const Overlay = () => {
 	return (
 		<>
-			<Outlet />
 			<div className='overlay'>
 				<NavLink className='home-link' aria-label='home page link' to=''>
 					<svg
@@ -34,6 +33,7 @@ const Overlay = () => {
 					Home
 				</NavLink>
 			</div>
+			<Outlet />
 		</>
 	);
 };
