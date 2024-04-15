@@ -91,9 +91,11 @@ const Send = () => {
 			{remoteFiles.length > 0 ? (
 				<div className='qr-code-list'>
 					{remoteFiles.map((file, i) => (
-						<div key={i} className='file'>
+						<div key={i}>
 							<div className='qr-code' aria-label='qr code'>
 								<QRCodeSVG value={file.url} />
+							</div>
+							<div className='file'>
 								<a
 									href={file.url}
 									className='file-details'
@@ -106,6 +108,7 @@ const Send = () => {
 										<div>{prettyBytes(file.size)}</div>
 									</span>
 								</a>
+								<div className='tooltip'>{file.name}</div>
 							</div>
 						</div>
 					))}
