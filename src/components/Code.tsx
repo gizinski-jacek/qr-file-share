@@ -151,10 +151,10 @@ const Code = () => {
 			{dirTimer && (
 				<div className='countdown'>
 					{countdown ? (
-						<h3>
-							This folder will be deleted in:{' '}
-							<span>{convertMsToCountdown(countdown)}</span>
-						</h3>
+						<>
+							<h3>Folder will be deleted in: </h3>
+							<span>{convertMsToCountdown(countdown)}</span>{' '}
+						</>
 					) : (
 						<h3>Folder has been deleted.</h3>
 					)}
@@ -204,7 +204,7 @@ const Code = () => {
 				)}
 				{success && <h3>Files uploaded successfully.</h3>}
 				{fileUploadListErrors && (
-					<div className='error'>
+					<div className='error-msg'>
 						{fileUploadListErrors.map((error, i) => (
 							<div key={i}>{error}</div>
 						))}
@@ -287,7 +287,7 @@ const Code = () => {
 			)}
 		</div>
 	) : (
-		<div className='error'>{error}</div>
+		<div className='error-msg'>{error}</div>
 	);
 };
 

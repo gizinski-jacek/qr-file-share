@@ -101,10 +101,10 @@ const Send = () => {
 			{dirTimer && (
 				<div className='countdown'>
 					{countdown ? (
-						<h3>
-							This folder will be deleted in:{' '}
+						<>
+							<h3>Folder will be deleted in: </h3>
 							<span>{convertMsToCountdown(countdown)}</span>
-						</h3>
+						</>
 					) : (
 						<h3>Folder has been deleted.</h3>
 					)}
@@ -126,7 +126,7 @@ const Send = () => {
 			{remoteFiles.length > 0 ? (
 				<div className='qr-code-list'>
 					{remoteFiles.map((file, i) => (
-						<div key={i}>
+						<div key={i} className='qr-and-link'>
 							<div className='qr-code' aria-label='qr code'>
 								<QRCodeSVG value={file.url} />
 							</div>
@@ -192,7 +192,7 @@ const Send = () => {
 						</div>
 					)}
 					{fileUploadListErrors && (
-						<div className='error'>
+						<div className='error-msg'>
 							{fileUploadListErrors.map((error, i) => (
 								<div key={i}>{error}</div>
 							))}
@@ -254,7 +254,7 @@ const Send = () => {
 			)}
 		</div>
 	) : (
-		<div className='error'>{error}</div>
+		<div className='error-msg'>{error}</div>
 	);
 };
 
