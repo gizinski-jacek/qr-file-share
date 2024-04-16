@@ -98,7 +98,7 @@ const Send = () => {
 
 	return !error ? (
 		<div className='container'>
-			{dirTimer && countdown && (
+			{dirTimer && (
 				<div className='countdown'>
 					{countdown ? (
 						<h3>
