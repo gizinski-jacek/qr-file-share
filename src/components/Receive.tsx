@@ -11,7 +11,6 @@ import { convertMsToCountdown } from '../lib/utils';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
-	const [dirTimer, setDirTimer] = useState<number | null>(null);
 	const [countdown, setCountdown] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
@@ -19,20 +18,15 @@ const Receive = () => {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (dirTimer) {
-				const time = dirTimer - Date.now();
-				if (time < 0) {
-					setCountdown(null);
-				} else {
-					setCountdown(time);
-				}
+			if (countdown && countdown > 0) {
+				setCountdown(countdown - 1000);
 			}
-		}, 500);
+		}, 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, [dirTimer]);
+	}, [countdown]);
 
 	useEffect(() => {
 		(async () => {
@@ -41,11 +35,10 @@ const Receive = () => {
 					`${process.env.REACT_APP_API_URI}/api/receive-files`
 				);
 				const newSocket = io(`${process.env.REACT_APP_API_URI}/notifications`, {
-					query: { code: res.data },
+					query: { code: res.data.dirCode },
 				});
 				setDirId(res.data.dirCode);
-				setDirTimer(parseInt(res.data.dirDeleteTime));
-				setCountdown(res.data.dirDeleteTime - Date.now());
+				setCountdown(parseInt(res.data.dirTimeLeft));
 				setSocket(newSocket);
 				return () => {
 					newSocket.disconnect();
@@ -85,18 +78,18 @@ const Receive = () => {
 			<div className='form-container'>
 				{dirId && (
 					<>
-						{dirTimer && (
+						{countdown !== null ? (
 							<div className='countdown'>
-								{countdown ? (
+								{countdown > 0 ? (
 									<>
 										<h3>Folder will be deleted in: </h3>
-										<span>{convertMsToCountdown(countdown)}</span>
+										<span>{convertMsToCountdown(countdown)}</span>{' '}
 									</>
 								) : (
 									<h3>Folder has been deleted.</h3>
 								)}
 							</div>
-						)}
+						) : null}
 						<div className='qr-code' aria-label='qr code'>
 							<QRCodeSVG
 								value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}

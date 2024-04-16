@@ -10,7 +10,6 @@ import { convertMsToCountdown } from '../lib/utils';
 
 const Send = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
-	const [dirTimer, setDirTimer] = useState<number | null>(null);
 	const [countdown, setCountdown] = useState<number | null>(null);
 	const [fileUploadList, setFileUploadList] = useState<FileList | null>(null);
 	const [fileUploadListErrors, setFileUploadListErrors] = useState<
@@ -23,20 +22,15 @@ const Send = () => {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (dirTimer) {
-				const time = dirTimer - Date.now();
-				if (time < 0) {
-					setCountdown(null);
-				} else {
-					setCountdown(time);
-				}
+			if (countdown && countdown > 0) {
+				setCountdown(countdown - 1000);
 			}
-		}, 500);
+		}, 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, [dirTimer]);
+	}, [countdown]);
 
 	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -77,8 +71,7 @@ const Send = () => {
 			);
 			setRemoteFiles(res.data.fileList);
 			setDirId(res.data.dirCode);
-			setDirTimer(parseInt(res.data.dirDeleteTime));
-			setCountdown(res.data.dirDeleteTime - Date.now());
+			setCountdown(parseInt(res.data.dirTimeLeft));
 			setFileUploadList(null);
 			setError(null);
 			setSuccess(true);
@@ -98,18 +91,18 @@ const Send = () => {
 
 	return !error ? (
 		<div className='container'>
-			{dirTimer && (
+			{countdown !== null ? (
 				<div className='countdown'>
-					{countdown ? (
+					{countdown > 0 ? (
 						<>
 							<h3>Folder will be deleted in: </h3>
-							<span>{convertMsToCountdown(countdown)}</span>
+							<span>{convertMsToCountdown(countdown)}</span>{' '}
 						</>
 					) : (
 						<h3>Folder has been deleted.</h3>
 					)}
 				</div>
-			)}
+			) : null}
 			{success && dirId && (
 				<div className='notification'>
 					<h3>Files uploaded successfully.</h3>
