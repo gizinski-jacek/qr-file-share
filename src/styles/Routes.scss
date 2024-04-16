@@ -7,6 +7,17 @@
 	gap: 3rem;
 }
 
+.countdown {
+	display: flex;
+	flex-direction: column;
+
+	span {
+		display: block;
+		margin: 1rem;
+		text-decoration: underline;
+	}
+}
+
 .form-container {
 	width: 100%;
 	display: flex;
