@@ -10,7 +10,6 @@ import { convertMsToCountdown } from '../lib/utils';
 
 const Code = () => {
 	const { dirId } = useParams();
-	const [dirTimer, setDirTimer] = useState<number | null>(null);
 	const [countdown, setCountdown] = useState<number | null>(null);
 	const [fileUploadList, setFileUploadList] = useState<FileList | null>(null);
 	const [fileUploadListErrors, setFileUploadListErrors] = useState<
@@ -25,20 +24,15 @@ const Code = () => {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			if (dirTimer) {
-				const time = dirTimer - Date.now();
-				if (time < 0) {
-					setCountdown(null);
-				} else {
-					setCountdown(time);
-				}
+			if (countdown && countdown > 0) {
+				setCountdown(countdown - 1000);
 			}
-		}, 500);
+		}, 1000);
 
 		return () => {
 			clearInterval(timer);
 		};
-	}, [dirTimer]);
+	}, [countdown]);
 
 	useEffect(() => {
 		(async () => {
@@ -58,8 +52,7 @@ const Code = () => {
 						{ query: { code: dirId }, transports: ['websocket'] }
 					);
 					setRemoteFiles(res.data.fileList);
-					setDirTimer(parseInt(res.data.dirDeleteTime));
-					setCountdown(res.data.dirDeleteTime - Date.now());
+					setCountdown(parseInt(res.data.dirTimeLeft));
 					setSocket(newSocket);
 					return () => newSocket.disconnect();
 				}
@@ -148,9 +141,9 @@ const Code = () => {
 
 	return !error ? (
 		<div className='container'>
-			{dirTimer && (
+			{countdown !== null ? (
 				<div className='countdown'>
-					{countdown ? (
+					{countdown > 0 ? (
 						<>
 							<h3>Folder will be deleted in: </h3>
 							<span>{convertMsToCountdown(countdown)}</span>{' '}
@@ -159,7 +152,7 @@ const Code = () => {
 						<h3>Folder has been deleted.</h3>
 					)}
 				</div>
-			)}
+			) : null}
 			<div className='form-container'>
 				{fileUploadList ? (
 					<div
