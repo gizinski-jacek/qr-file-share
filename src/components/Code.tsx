@@ -66,9 +66,9 @@ const Code = () => {
 			} catch (error: any) {
 				console.error(error.message);
 				if (error instanceof AxiosError) {
-					setError(error.response?.data || 'Unknown server error.');
+					setError(error.response?.data || 'Unknown server error');
 				} else {
-					setError('Unknown server error.');
+					setError('Unknown server error');
 				}
 			}
 		})();
@@ -135,9 +135,9 @@ const Code = () => {
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setError(error.response?.data || 'Unknown server error.');
+				setError(error.response?.data || 'Unknown server error');
 			} else {
-				setError('Unknown server error.');
+				setError('Unknown server error');
 			}
 		}
 	};
