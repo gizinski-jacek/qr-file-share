@@ -54,9 +54,9 @@ const Receive = () => {
 				console.error(error.message);
 				setDirId(null);
 				if (error instanceof AxiosError) {
-					setError(error.response?.data || 'Unknown server error.');
+					setError(error.response?.data || 'Unknown server error');
 				} else {
-					setError('Unknown server error.');
+					setError('Unknown server error');
 				}
 			}
 		})();
@@ -139,7 +139,7 @@ const Receive = () => {
 			)}
 		</div>
 	) : (
-		<div>{error}</div>
+		<div className='error-msg'>{error}</div>
 	);
 };
 
