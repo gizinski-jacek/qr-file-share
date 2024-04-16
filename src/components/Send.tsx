@@ -1,20 +1,42 @@
 import '../styles/Routes.scss';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
 import { RemoteFile } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
 import { NavLink } from 'react-router-dom';
+import { convertMsToCountdown } from '../lib/utils';
 
 const Send = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
-	const [fileList, setFileList] = useState<FileList | null>(null);
-	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
+	const [dirTimer, setDirTimer] = useState<number | null>(null);
+	const [countdown, setCountdown] = useState<number | null>(null);
+	const [fileUploadList, setFileUploadList] = useState<FileList | null>(null);
+	const [fileUploadListErrors, setFileUploadListErrors] = useState<
+		string[] | null
+	>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (dirTimer) {
+				const time = dirTimer - Date.now();
+				if (time < 0) {
+					setCountdown(null);
+				} else {
+					setCountdown(time);
+				}
+			}
+		}, 500);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [dirTimer]);
 
 	const clickSelectFile = (e: React.MouseEvent<HTMLDivElement>) => {
 		e.stopPropagation();
@@ -32,30 +54,31 @@ const Send = () => {
 			}
 		}
 		if (errors.length) {
-			setFileList(null);
-			setFileListErrors(errors);
+			setFileUploadList(null);
+			setFileUploadListErrors(errors);
 			return;
 		}
-		setFileListErrors(null);
-		setFileList(files);
+		setFileUploadListErrors(null);
+		setFileUploadList(files);
 		setSuccess(false);
 	};
 
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		try {
-			if (!fileList || !!fileListErrors) return;
+			if (!fileUploadList || !!fileUploadListErrors) return;
 			const uploadData = new FormData();
-			for (let i = 0; i < fileList.length; i++) {
-				uploadData.append('files', fileList[i]);
+			for (let i = 0; i < fileUploadList.length; i++) {
+				uploadData.append('files', fileUploadList[i]);
 			}
 			const res = await axios.post(
 				`${process.env.REACT_APP_API_URI}/api/send-files`,
 				uploadData
 			);
 			setRemoteFiles(res.data.fileList);
-			setDirId(res.data.code);
-			setFileList(null);
+			setDirId(res.data.dirCode);
+			setDirTimer(parseInt(res.data.dirDeleteTime));
+			setFileUploadList(null);
 			setError(null);
 			setSuccess(true);
 		} catch (error: any) {
@@ -69,11 +92,19 @@ const Send = () => {
 	};
 
 	const handleClearList = () => {
-		setFileList(null);
+		setFileUploadList(null);
 	};
 
 	return !error ? (
 		<div className='container'>
+			{dirTimer && countdown && (
+				<div className='countdown'>
+					<h3>
+						This folder will be deleted in:{' '}
+						<span>{convertMsToCountdown(countdown)}</span>
+					</h3>
+				</div>
+			)}
 			{success && dirId && (
 				<div>
 					<h3>Files uploaded successfully.</h3>
@@ -115,7 +146,7 @@ const Send = () => {
 				</div>
 			) : (
 				<div className='form-container'>
-					{fileList ? (
+					{fileUploadList ? (
 						<div
 							className='status-icon'
 							onClick={clickSelectFile}
@@ -156,18 +187,18 @@ const Send = () => {
 							</svg>
 						</div>
 					)}
-					{fileListErrors && (
+					{fileUploadListErrors && (
 						<div className='error'>
-							{fileListErrors.map((error, i) => (
+							{fileUploadListErrors.map((error, i) => (
 								<div key={i}>{error}</div>
 							))}
 						</div>
 					)}
-					{fileList && (
+					{fileUploadList && (
 						<>
 							<h3>Selected files:</h3>
 							<div className='file-list'>
-								{Array.from(fileList).map((file, i) => {
+								{Array.from(fileUploadList).map((file, i) => {
 									return (
 										<div className='file' key={i}>
 											<div className='file-details'>
@@ -203,14 +234,14 @@ const Send = () => {
 						<button
 							type='button'
 							onClick={handleFileUpload}
-							disabled={!fileList || !!fileListErrors}
+							disabled={!fileUploadList || !!fileUploadListErrors}
 						>
 							Send
 						</button>
 						<button
 							type='button'
 							onClick={handleClearList}
-							disabled={!fileList || !!fileListErrors}
+							disabled={!fileUploadList || !!fileUploadListErrors}
 						>
 							Clear
 						</button>
