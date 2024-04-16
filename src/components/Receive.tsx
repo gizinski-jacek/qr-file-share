@@ -7,12 +7,32 @@ import { RemoteFile, SocketType } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
 import { NavLink } from 'react-router-dom';
+import { convertMsToCountdown } from '../lib/utils';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
+	const [dirTimer, setDirTimer] = useState<number | null>(null);
+	const [countdown, setCountdown] = useState<number | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (dirTimer) {
+				const time = dirTimer - Date.now();
+				if (time < 0) {
+					setCountdown(null);
+				} else {
+					setCountdown(time);
+				}
+			}
+		}, 500);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [dirTimer]);
 
 	useEffect(() => {
 		(async () => {
@@ -23,7 +43,9 @@ const Receive = () => {
 				const newSocket = io(`${process.env.REACT_APP_API_URI}/notifications`, {
 					query: { code: res.data },
 				});
-				setDirId(res.data);
+				setDirId(res.data.dirCode);
+				setDirTimer(parseInt(res.data.dirDeleteTime));
+				setCountdown(res.data.dirDeleteTime - Date.now());
 				setSocket(newSocket);
 				return () => {
 					newSocket.disconnect();
@@ -63,6 +85,18 @@ const Receive = () => {
 			<div className='form-container'>
 				{dirId && (
 					<>
+						{dirTimer && (
+							<div className='countdown'>
+								{countdown ? (
+									<>
+										<h3>Folder will be deleted in: </h3>
+										<span>{convertMsToCountdown(countdown)}</span>
+									</>
+								) : (
+									<h3>Folder has been deleted.</h3>
+								)}
+							</div>
+						)}
 						<div className='qr-code' aria-label='qr code'>
 							<QRCodeSVG
 								value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
