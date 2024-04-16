@@ -59,6 +59,7 @@ const Code = () => {
 					);
 					setRemoteFiles(res.data.fileList);
 					setDirTimer(parseInt(res.data.dirDeleteTime));
+					setCountdown(res.data.dirDeleteTime - Date.now());
 					setSocket(newSocket);
 					return () => newSocket.disconnect();
 				}
@@ -149,10 +150,14 @@ const Code = () => {
 		<div className='container'>
 			{dirTimer && countdown && (
 				<div className='countdown'>
-					<h3>
-						This folder will be deleted in:{' '}
-						<span>{convertMsToCountdown(countdown)}</span>
-					</h3>
+					{countdown ? (
+						<h3>
+							This folder will be deleted in:{' '}
+							<span>{convertMsToCountdown(countdown)}</span>
+						</h3>
+					) : (
+						<h3>Folder has been deleted.</h3>
+					)}
 				</div>
 			)}
 			<div className='form-container'>
