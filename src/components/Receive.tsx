@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import { RemoteFile, SocketType } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
+import { NavLink } from 'react-router-dom';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
@@ -61,13 +62,22 @@ const Receive = () => {
 		<div className='container'>
 			<div className='form-container'>
 				{dirId && (
-					<div className='qr-code' aria-label='qr code'>
-						<QRCodeSVG
-							value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
-						/>
-					</div>
+					<>
+						<div className='qr-code' aria-label='qr code'>
+							<QRCodeSVG
+								value={`${process.env.REACT_APP_CLIENT_URI}/code/${dirId}`}
+							/>
+						</div>
+						<NavLink
+							className='folder-link'
+							to={`../code/${dirId}`}
+							aria-label='go to folder'
+						>
+							<h3>Go to your folder:</h3>
+							<span>{dirId}</span>
+						</NavLink>
+					</>
 				)}
-				{dirId && <div className='directory-id'>{dirId}</div>}
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>
