@@ -6,17 +6,39 @@ import { io } from 'socket.io-client';
 import { RemoteFile, SocketType } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
+import { convertMsToCountdown } from '../lib/utils';
 
 const Code = () => {
 	const { dirId } = useParams();
-	const [fileList, setFileList] = useState<FileList | null>(null);
-	const [fileListErrors, setFileListErrors] = useState<string[] | null>(null);
+	const [dirTimer, setDirTimer] = useState<number | null>(null);
+	const [countdown, setCountdown] = useState<number | null>(null);
+	const [fileUploadList, setFileUploadList] = useState<FileList | null>(null);
+	const [fileUploadListErrors, setFileUploadListErrors] = useState<
+		string[] | null
+	>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (dirTimer) {
+				const time = dirTimer - Date.now();
+				if (time < 0) {
+					setCountdown(null);
+				} else {
+					setCountdown(time);
+				}
+			}
+		}, 500);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [dirTimer]);
 
 	useEffect(() => {
 		(async () => {
@@ -35,7 +57,8 @@ const Code = () => {
 						`${process.env.REACT_APP_API_URI}/notifications`,
 						{ query: { code: dirId }, transports: ['websocket'] }
 					);
-					setRemoteFiles(res.data);
+					setRemoteFiles(res.data.fileList);
+					setDirTimer(parseInt(res.data.dirDeleteTime));
 					setSocket(newSocket);
 					return () => newSocket.disconnect();
 				}
@@ -84,28 +107,28 @@ const Code = () => {
 			}
 		}
 		if (errors.length) {
-			setFileListErrors(errors);
-			setFileList(null);
+			setFileUploadListErrors(errors);
+			setFileUploadList(null);
 			return;
 		}
-		setFileListErrors(null);
-		setFileList(files);
+		setFileUploadListErrors(null);
+		setFileUploadList(files);
 		setSuccess(false);
 	};
 
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		try {
-			if (!fileList || !!fileListErrors) return;
+			if (!fileUploadList || !!fileUploadListErrors) return;
 			const uploadData = new FormData();
-			for (let i = 0; i < fileList.length; i++) {
-				uploadData.append('files', fileList[i]);
+			for (let i = 0; i < fileUploadList.length; i++) {
+				uploadData.append('files', fileUploadList[i]);
 			}
 			await axios.post(
 				`${process.env.REACT_APP_API_URI}/api/receive-files/${dirId}`,
 				uploadData
 			);
-			setFileList(null);
+			setFileUploadList(null);
 			setError(null);
 			setSuccess(true);
 		} catch (error: any) {
@@ -119,13 +142,21 @@ const Code = () => {
 	};
 
 	const handleClearList = () => {
-		setFileList(null);
+		setFileUploadList(null);
 	};
 
 	return !error ? (
 		<div className='container'>
+			{dirTimer && countdown && (
+				<div className='countdown'>
+					<h3>
+						This folder will be deleted in:{' '}
+						<span>{convertMsToCountdown(countdown)}</span>
+					</h3>
+				</div>
+			)}
 			<div className='form-container'>
-				{fileList ? (
+				{fileUploadList ? (
 					<div
 						className='status-icon'
 						onClick={clickSelectFile}
@@ -167,18 +198,18 @@ const Code = () => {
 					</div>
 				)}
 				{success && <h3>Files uploaded successfully.</h3>}
-				{fileListErrors && (
+				{fileUploadListErrors && (
 					<div className='error'>
-						{fileListErrors.map((error, i) => (
+						{fileUploadListErrors.map((error, i) => (
 							<div key={i}>{error}</div>
 						))}
 					</div>
 				)}
-				{fileList && (
+				{fileUploadList && (
 					<>
 						<h3>Selected files:</h3>
 						<div className='file-list'>
-							{Array.from(fileList).map((file, i) => {
+							{Array.from(fileUploadList).map((file, i) => {
 								return (
 									<div className='file' key={i}>
 										<div className='file-details'>
@@ -212,14 +243,14 @@ const Code = () => {
 					<button
 						type='button'
 						onClick={handleFileUpload}
-						disabled={!fileList || !!fileListErrors}
+						disabled={!fileUploadList || !!fileUploadListErrors}
 					>
 						Send
 					</button>
 					<button
 						type='button'
 						onClick={handleClearList}
-						disabled={!fileList || !!fileListErrors}
+						disabled={!fileUploadList || !!fileUploadListErrors}
 					>
 						Clear
 					</button>
