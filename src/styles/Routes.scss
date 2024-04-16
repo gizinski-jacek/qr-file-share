@@ -12,10 +12,12 @@
 .countdown {
 	display: flex;
 	flex-direction: column;
+	align-items: center;
+	gap: 0.5rem;
 
 	span {
-		display: block;
-		margin: 0.5rem;
+		font-size: 1.5rem;
+		font-weight: 600;
 		text-decoration: underline;
 	}
 }
@@ -47,10 +49,14 @@
 	}
 }
 
+.qr-and-link {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
 .file {
 	position: relative;
-	width: 200px;
-	margin: 0 auto;
 
 	.file-details {
 		display: flex;
@@ -64,7 +70,9 @@
 		border-radius: 8px;
 
 		> span {
-			width: 130px;
+			width: 0;
+			flex: 1;
+			overflow: hidden;
 
 			> div {
 				overflow: hidden;
@@ -90,12 +98,11 @@
 	&:hover .tooltip {
 		height: max-content;
 		width: max-content;
-		max-width: 160px;
+		max-width: 200px;
 		text-align: center;
 		word-break: break-all;
 		padding: 0.25rem;
-		background-color: var(--c-purple);
-		border-radius: 4px;
+		border-radius: 8px;
 		opacity: 1;
 		transition-delay: 0.2s;
 	}
@@ -114,7 +121,7 @@
 .file-list {
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, 200px);
+	grid-template-columns: repeat(auto-fit, 256px);
 	justify-content: center;
 	gap: 1rem;
 }
@@ -123,7 +130,8 @@
 	display: flex;
 	justify-content: center;
 	flex-wrap: wrap;
-	gap: 5rem;
+	column-gap: 4rem;
+	row-gap: 2rem;
 }
 
 .qr-code {
@@ -132,7 +140,6 @@
 	justify-content: space-evenly;
 	align-items: center;
 	gap: 1rem;
-	margin-bottom: 2rem;
 	font-size: 1rem;
 	font-weight: 600;
 	line-height: 1.25rem;
@@ -141,8 +148,8 @@
 	> svg {
 		width: 35vw;
 		height: auto;
-		min-width: 200px;
-		max-width: 280px;
+		min-width: 128px;
+		max-width: 256px;
 		transition: none;
 	}
 }
