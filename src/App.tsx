@@ -1,5 +1,11 @@
 import './App.scss';
-import { Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import {
+	Routes,
+	Route,
+	NavLink,
+	Navigate,
+	useNavigate,
+} from 'react-router-dom';
 import Send from './components/Send';
 import Receive from './components/Receive';
 import Code from './components/Code';
@@ -11,6 +17,15 @@ const App = () => {
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInput(e.target.value);
+	};
+
+	const navigate = useNavigate();
+
+	const handleFormSubmit = (
+		e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+	) => {
+		e.preventDefault();
+		navigate(`code/${input}`);
 	};
 
 	return (
@@ -34,7 +49,7 @@ const App = () => {
 									<div>Receive</div>
 								</NavLink>
 							</div>
-							<form className='home-page-form'>
+							<form className='home-page-form' onSubmit={handleFormSubmit}>
 								<label htmlFor='inputCode'>Enter your code</label>
 								<input
 									className={input.length !== 6 ? 'error' : ''}
@@ -46,11 +61,7 @@ const App = () => {
 									value={input}
 								></input>
 								<span>Your Code, 6 characters long</span>
-								<NavLink to={`code/${input}`}>
-									<button type='button' disabled={input.length !== 6}>
-										Go to folder
-									</button>
-								</NavLink>
+								<button onClick={handleFormSubmit}>Go to folder</button>
 							</form>
 						</div>
 					}
