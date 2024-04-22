@@ -1,18 +1,20 @@
 # QR File Sharing (Client)
 
-A small Facebook clone Frontend client.
+An app for easy file sharing between your PC and phone.
 
 For the Backend API go [here](https://github.com/gizinski-jacek/qr-file-share-api).
 
 ## Table of contents
 
-- [Github & Live](#github--live)
-- [Getting Started](#getting-started)
-- [React](#react)
-- [Deploy](#deploy)
-- [Features](#features)
-- [Status](#status)
-- [Contact](#contact)
+- [QR File Sharing (Client)](#qr-file-sharing-client)
+  - [Table of contents](#table-of-contents)
+- [Github \& Live](#github--live)
+  - [Getting Started](#getting-started)
+  - [React](#react)
+  - [Deploy](#deploy)
+  - [Features](#features)
+  - [Status](#status)
+  - [Contact](#contact)
 
 # Github & Live
 
@@ -60,30 +62,22 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Deploy
 
-You can easily deploy this app using [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/docs).
 
-In the project root directory run these commands:
+Don't forget to add **.env** file with these environment variables for the app:
 
-<!-- !!! ```bash
-npm install -g netlify-cli
-netlify login
-npm run build
-netlify deploy
-``` -->
-
-Don't forget to add .env file with environment variables for the app.
+```
+REACT_APP_CLIENT_URI
+REACT_APP_API_URI
+```
 
 ## Features
 
-<!-- !!! - Responsive UI
-- Sign up and log in with email or Facebook account
-- Adding posts and comments
-- Liking posts and comments
-- Searching for users and posts
-- Sending and cancelling friend requests
-- Removing and blocking users
-- Real-time notifications about incoming friend requests and chat messages
-- Chatting in real-time with other users -->
+- Easy way to share files via 3 methods:
+  - "Send" page for uploading files, generating QR code to scan and directly download files with your phone
+  - "Receive" page generating QR code to scan with your phone to redirect user to shared folder
+  - "Code" input box or page allowing user to access existing folder with uploaded files or creating new folder if it does not exist
+- All folders with its files are periodically deleted
 
 ## Status
 
