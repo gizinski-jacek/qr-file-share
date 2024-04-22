@@ -45,7 +45,8 @@ const Code = () => {
 					return () => clearTimeout(timeout);
 				} else {
 					const res = await axios.get(
-						`${process.env.REACT_APP_API_URI}/api/code-dir-check/${dirId}`
+						`${process.env.REACT_APP_API_URI}/api/code-dir-check/${dirId}`,
+						{ timeout: 15000 }
 					);
 					const newSocket = io(
 						`${process.env.REACT_APP_API_URI}/notifications`,
@@ -59,9 +60,12 @@ const Code = () => {
 			} catch (error: any) {
 				console.error(error.message);
 				if (error instanceof AxiosError) {
-					setError(error.response?.data || 'Unknown server error');
+					setError(
+						error.response?.data ||
+							'Unknown server error. Please try again later.'
+					);
 				} else {
-					setError('Unknown server error');
+					setError('Unknown server error. Please try again later.');
 				}
 			}
 		})();
@@ -120,7 +124,8 @@ const Code = () => {
 			}
 			await axios.post(
 				`${process.env.REACT_APP_API_URI}/api/receive-files/${dirId}`,
-				uploadData
+				uploadData,
+				{ timeout: 15000 }
 			);
 			setFileUploadList(null);
 			setError(null);
@@ -128,9 +133,12 @@ const Code = () => {
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setError(error.response?.data || 'Unknown server error');
+				setError(
+					error.response?.data ||
+						'Unknown server error. Please try again later.'
+				);
 			} else {
-				setError('Unknown server error');
+				setError('Unknown server error. Please try again later.');
 			}
 		}
 	};

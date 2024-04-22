@@ -32,7 +32,8 @@ const Receive = () => {
 		(async () => {
 			try {
 				const res = await axios.get(
-					`${process.env.REACT_APP_API_URI}/api/receive-files`
+					`${process.env.REACT_APP_API_URI}/api/receive-files`,
+					{ timeout: 15000 }
 				);
 				const newSocket = io(`${process.env.REACT_APP_API_URI}/notifications`, {
 					query: { code: res.data.dirCode },
@@ -47,9 +48,12 @@ const Receive = () => {
 				console.error(error.message);
 				setDirId(null);
 				if (error instanceof AxiosError) {
-					setError(error.response?.data || 'Unknown server error');
+					setError(
+						error.response?.data ||
+							'Unknown server error. Please try again later.'
+					);
 				} else {
-					setError('Unknown server error');
+					setError('Unknown server error. Please try again later.');
 				}
 			}
 		})();

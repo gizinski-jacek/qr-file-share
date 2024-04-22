@@ -67,7 +67,8 @@ const Send = () => {
 			}
 			const res = await axios.post(
 				`${process.env.REACT_APP_API_URI}/api/send-files`,
-				uploadData
+				uploadData,
+				{ timeout: 15000 }
 			);
 			setRemoteFiles(res.data.fileList);
 			setDirId(res.data.dirCode);
@@ -78,9 +79,12 @@ const Send = () => {
 		} catch (error: any) {
 			console.error(error.message);
 			if (error instanceof AxiosError) {
-				setError(error.response?.data || 'Unknown server error');
+				setError(
+					error.response?.data ||
+						'Unknown server error. Please try again later.'
+				);
 			} else {
-				setError('Unknown server error');
+				setError('Unknown server error. Please try again later.');
 			}
 		}
 	};
