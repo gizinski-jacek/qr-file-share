@@ -18,11 +18,11 @@ For the Backend API go [here](https://github.com/gizinski-jacek/qr-file-share-ap
 
 # Github & Live
 
-Github repo can be found [here](https://github.com/gizinski-jacek/qr-file-share).
+Github repo can be found [here](https://github.com/gizinski-jacek/fia-decisions).
 
-<!-- !!! Live demo can be found on [Netlify](https://odinbook-client-97346.netlify.app). -->
+API worker repo can be found [here](https://github.com/gizinski-jacek/qr-file-share-api).
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Live demo can be found on [Vercel](https://qr-file-share-umber.vercel.app).
 
 ## Getting Started
 
