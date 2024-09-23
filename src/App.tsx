@@ -50,7 +50,7 @@ const App = () => {
 								</NavLink>
 							</div>
 							<form className='home-page-form' onSubmit={handleFormSubmit}>
-								<label htmlFor='inputCode'>Enter your code</label>
+								<label htmlFor='inputCode'>Enter folder code</label>
 								<input
 									className={input.length !== 6 ? 'error' : ''}
 									id='inputCode'
@@ -60,7 +60,7 @@ const App = () => {
 									onChange={handleInputChange}
 									value={input}
 								></input>
-								<span>Your Code, 6 characters long</span>
+								<span>Folder code, 6 characters long</span>
 								<button onClick={handleFormSubmit}>Go to folder</button>
 							</form>
 						</div>
