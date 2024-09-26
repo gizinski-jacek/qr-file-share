@@ -2,7 +2,7 @@
 
 An app for easy file sharing between your PC and phone.
 
-For the Backend API go [here](https://github.com/gizinski-jacek/qr-file-share-api).
+For the API go [here](https://github.com/gizinski-jacek/qr-file-share-api).
 
 ## Table of contents
 
