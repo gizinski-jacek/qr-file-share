@@ -13,7 +13,8 @@ import Overlay from './components/Overlay';
 import { useState } from 'react';
 
 const App = () => {
-	const [input, setInput] = useState('');
+	const [input, setInput] = useState<string>('');
+	const [error, setError] = useState<boolean>(false);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInput(e.target.value);
@@ -21,10 +22,21 @@ const App = () => {
 
 	const navigate = useNavigate();
 
+	const handleInputValidate = (e: React.FocusEvent<HTMLInputElement>) => {
+		if (input.length !== 6) {
+			setError(true);
+		} else {
+			setError(false);
+		}
+	};
+
 	const handleFormSubmit = (
 		e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
 	) => {
 		e.preventDefault();
+		if (!error) {
+			return;
+		}
 		navigate(`code/${input}`);
 	};
 
@@ -52,13 +64,14 @@ const App = () => {
 							<form className='home-page-form' onSubmit={handleFormSubmit}>
 								<label htmlFor='inputCode'>Enter folder code</label>
 								<input
-									className={input.length !== 6 ? 'error' : ''}
+									className={error ? 'error' : ''}
 									id='inputCode'
 									type='text'
 									minLength={6}
 									maxLength={6}
 									onChange={handleInputChange}
 									value={input}
+									onBlur={handleInputValidate}
 								></input>
 								<span>Folder code, 6 characters long</span>
 								<button onClick={handleFormSubmit}>Go to folder</button>
