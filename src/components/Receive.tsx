@@ -8,10 +8,12 @@ import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
 import { NavLink } from 'react-router-dom';
 import { convertMsToCountdown } from '../lib/utils';
+import Loading from './Loading';
 
 const Receive = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
 	const [countdown, setCountdown] = useState<number | null>(null);
+	const [fetching, setFetching] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [socket, setSocket] = useState<SocketType | null>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
@@ -31,6 +33,7 @@ const Receive = () => {
 	useEffect(() => {
 		(async () => {
 			try {
+				setFetching(true);
 				const res = await axios.get(
 					`${process.env.REACT_APP_API_URI}/api/receive-files`,
 					{ timeout: 15000 }
@@ -38,6 +41,7 @@ const Receive = () => {
 				const newSocket = io(`${process.env.REACT_APP_API_URI}/notifications`, {
 					query: { code: res.data.dirCode },
 				});
+				setFetching(false);
 				setDirId(res.data.dirCode);
 				setCountdown(parseInt(res.data.dirTimeLeft));
 				setSocket(newSocket);
@@ -55,6 +59,7 @@ const Receive = () => {
 				} else {
 					setError('Unknown server error. Please try again later.');
 				}
+				setFetching(false);
 			}
 		})();
 	}, []);
@@ -77,7 +82,7 @@ const Receive = () => {
 		};
 	}, [socket]);
 
-	return !error ? (
+	return (
 		<div className='container'>
 			<div className='form-container'>
 				{dirId && (
@@ -109,6 +114,8 @@ const Receive = () => {
 						</NavLink>
 					</>
 				)}
+				{fetching && <Loading width='25%' />}
+				{error && <div className='error-msg'>{error}</div>}
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>
@@ -135,8 +142,6 @@ const Receive = () => {
 				</div>
 			)}
 		</div>
-	) : (
-		<div className='error-msg'>{error}</div>
 	);
 };
 

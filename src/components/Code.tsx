@@ -7,6 +7,7 @@ import { RemoteFile, SocketType } from '../types';
 import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
 import { convertMsToCountdown } from '../lib/utils';
+import Loading from './Loading';
 
 const Code = () => {
 	const { dirId } = useParams();
@@ -15,6 +16,7 @@ const Code = () => {
 	const [fileUploadListErrors, setFileUploadListErrors] = useState<
 		string[] | null
 	>(null);
+	const [fetching, setFetching] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
@@ -117,6 +119,7 @@ const Code = () => {
 	const handleFileUpload = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		try {
+			setFetching(true);
 			if (!fileUploadList || !!fileUploadListErrors) return;
 			const uploadData = new FormData();
 			for (let i = 0; i < fileUploadList.length; i++) {
@@ -127,6 +130,7 @@ const Code = () => {
 				uploadData,
 				{ timeout: 15000 }
 			);
+			setFetching(false);
 			setFileUploadList(null);
 			setError(null);
 			setSuccess(true);
@@ -140,6 +144,7 @@ const Code = () => {
 			} else {
 				setError('Unknown server error. Please try again later.');
 			}
+			setFetching(false);
 		}
 	};
 
@@ -147,7 +152,7 @@ const Code = () => {
 		setFileUploadList(null);
 	};
 
-	return !error ? (
+	return (
 		<div className='container'>
 			{countdown !== null ? (
 				<div className='countdown'>
@@ -261,6 +266,8 @@ const Code = () => {
 						Clear
 					</button>
 				</div>
+				{fetching && <Loading width='25%' />}
+				{error && <div className='error-msg'>{error}</div>}
 			</div>
 			{remoteFiles.length > 0 && (
 				<div className='server'>
@@ -287,8 +294,6 @@ const Code = () => {
 				</div>
 			)}
 		</div>
-	) : (
-		<div className='error-msg'>{error}</div>
 	);
 };
 

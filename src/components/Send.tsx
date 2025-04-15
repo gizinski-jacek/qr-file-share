@@ -7,6 +7,7 @@ import { FileIcon } from 'react-file-icon';
 import prettyBytes from 'pretty-bytes';
 import { NavLink } from 'react-router-dom';
 import { convertMsToCountdown } from '../lib/utils';
+import Loading from './Loading';
 
 const Send = () => {
 	const [dirId, setDirId] = useState<string | null>(null);
@@ -16,6 +17,7 @@ const Send = () => {
 		string[] | null
 	>(null);
 	const [remoteFiles, setRemoteFiles] = useState<RemoteFile[]>([]);
+	const [fetching, setFetching] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 	const ref = useRef<HTMLInputElement>(null);
@@ -61,6 +63,7 @@ const Send = () => {
 		e.preventDefault();
 		try {
 			if (!fileUploadList || !!fileUploadListErrors) return;
+			setFetching(true);
 			const uploadData = new FormData();
 			for (let i = 0; i < fileUploadList.length; i++) {
 				uploadData.append('files', fileUploadList[i]);
@@ -70,6 +73,7 @@ const Send = () => {
 				uploadData,
 				{ timeout: 15000 }
 			);
+			setFetching(false);
 			setRemoteFiles(res.data.fileList);
 			setDirId(res.data.dirCode);
 			setCountdown(parseInt(res.data.dirTimeLeft));
@@ -86,6 +90,7 @@ const Send = () => {
 			} else {
 				setError('Unknown server error. Please try again later.');
 			}
+			setFetching(false);
 		}
 	};
 
@@ -93,7 +98,7 @@ const Send = () => {
 		setFileUploadList(null);
 	};
 
-	return !error ? (
+	return (
 		<div className='container'>
 			{countdown !== null ? (
 				<div className='countdown'>
@@ -247,11 +252,11 @@ const Send = () => {
 							Clear
 						</button>
 					</div>
+					{fetching && <Loading width='25%' />}
+					{error && <div className='error-msg'>{error}</div>}
 				</div>
 			)}
 		</div>
-	) : (
-		<div className='error-msg'>{error}</div>
 	);
 };
 
